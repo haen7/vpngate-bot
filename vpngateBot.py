@@ -5,15 +5,15 @@ import os
 from urllib.request import urlopen
 import re,base64,csv,io
 
-# Port is given by Heroku
+# Port is given by render.com
 PORT = int(os.environ.get('PORT', 5000))
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# botfather token and heroku app name
-# define as Environment Variables in heroku 
+# botfather token and render.com app name
+# define as Environment Variables in render.com 
 
 TOKEN = os.environ.get('TOKEN')
 APP_NAME = os.environ.get('APP_NAME', 'vpngate-bot') 
@@ -94,7 +94,7 @@ def main():
     updater.start_webhook(listen="0.0.0.0",
                           port=int(PORT),
                           url_path=TOKEN)
-    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(APP_NAME, TOKEN))
+    updater.bot.setWebhook("https://{}.onrender.com/{}".format(APP_NAME, TOKEN))
     
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
