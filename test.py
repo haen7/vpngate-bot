@@ -16,16 +16,17 @@ with vpnfile as csvfile:
     for row in reader:
         try:
             if int(row[2])>1100000 and int(row[2])<4000000 and int(row[7])>0 and int(row[3])<20 :
-                filename=row[5]+"-"+row[1]+".ovpn"
-                print(filename)
-                print(type(filename))
-                config=base64.b64decode(row[14])
+                #filename=row[5]+"-"+row[1]+".ovpn"
+                #print(filename)
+                #print(type(filename))
+                #config=base64.b64decode(row[14])
+                config=row[0]+".opengw.net"
                 print(type(config))
-                file_like=io.BytesIO(config)
-                print(type(file_like))
-                print(type(file_like.read()))
-                print(file_like)
-                #print(config)
+                #file_like=io.BytesIO(config)
+                #print(type(file_like))
+                #print(type(file_like.read()))
+                #print(file_like)
+                print(config)
         except Exception as e:
             break
         else:

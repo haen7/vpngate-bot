@@ -13,7 +13,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # botfather token and render.com app name
-# define as Environment Variables in render.com 
+# define as Environment Variables in render.com
 
 TOKEN = os.environ.get('TOKEN')
 APP_NAME = os.environ.get('APP_NAME', 'vpngate-bot') 
@@ -30,7 +30,7 @@ def stop(update, context):
     
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('/start - start Bot\n/stop - stop Bot\n/getvpn - fetch OVPN files from vpngate.net\n/help - show help\n', quote='true') 
+    update.message.reply_text('/start - start Bot\n/stop - stop Bot\n/getovpn - fetch OVPN files\n/getsstp - fetch MS-SSTP urls\n/help - show help\n', quote='true') 
 
 def echo(update, context):
     """Echo the user message."""
@@ -40,7 +40,7 @@ def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-def getvpn(update, context):
+def getovpn(update, context):
     update.message.reply_text("Please Wait While Fetch OVPN Files", quote='true')
     vpndata=urlopen("http://www.vpngate.net/api/iphone").read().decode('utf-8')
     vpndata=vpndata.replace("*","")
@@ -67,6 +67,34 @@ def getvpn(update, context):
             finally:
                 pass
     update.message.reply_text("Done!")
+    
+def getsstp(update, context):
+    update.message.reply_text("Please Wait While Fetch MS-SSTP urls", quote='true')
+    vpndata=urlopen("http://www.vpngate.net/api/iphone").read().decode('utf-8')
+    vpndata=vpndata.replace("*","")
+    vpnfile=io.StringIO(vpndata)
+    
+    # Telegram Bot
+    bot = telegram.Bot(token=TOKEN)
+    userId = update.message.chat_id
+    
+    with vpnfile as csvfile:
+        reader=csv.reader(csvfile,delimiter=',')
+        next(reader)
+        next(reader)
+        for row in reader:
+            try:
+                if int(row[2])>1100000 and int(row[2])<4000000 and int(row[7])>0 and int(row[3])<20 :
+                    config=row[0]+".opengw.net"
+                    update.message.reply_text(config)
+            except Exception as e:
+                break
+            else:
+                pass
+            finally:
+                pass
+    update.message.reply_text("user: vpn\npass: vpn")
+    update.message.reply_text("Done!")
 
 def main():
     """Start the bot."""
@@ -81,7 +109,8 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("stop", stop))
-    dp.add_handler(CommandHandler("getvpn", getvpn))
+    dp.add_handler(CommandHandler("getovpn", getovpn))
+    dp.add_handler(CommandHandler("getsstp", getsstp))
     dp.add_handler(CommandHandler("help", help))
         
     # on noncommand i.e message - echo the message on Telegram
